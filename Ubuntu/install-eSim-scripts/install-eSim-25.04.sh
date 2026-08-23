@@ -133,7 +133,7 @@ function installKicad
                 fi
             else
                 echo "KiCad 8.0 is already installed."
-                exit 0
+                return 0
             fi
         fi
 
@@ -385,7 +385,7 @@ if [ $option == "--install" ];then
     
     else
         echo "Please select the right option"
-        exit 0    
+           
     fi
 
     # Calling functions
