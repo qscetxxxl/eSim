@@ -18,7 +18,8 @@ Inserted the missing fi statement at line 62 immediately following the execution
 
 Modified Code Snippet
 
-![alt text](image.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/e9e95bed-69e6-4de3-9f02-d00a4aba3448" />
+
 
 also verified with `bash -n install-eSim.sh `
 
@@ -27,7 +28,8 @@ The script attempts to write configuration variables ($config_dir, $eSim_Home) i
 
 Issue 2 & 3
 
-![alt text](image-1.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/57527eb8-df39-43b1-b371-6f700d345feb" />
+
 
 Issue 2: ./install-eSim.sh: line 64: /: Is a directory
 
@@ -66,9 +68,12 @@ bash -n install-eSim.sh
 
 issue 4 : script stopped after [kicad 8.0 already installed]
 
-![alt text](image-2.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/046137be-4996-4464-a65c-e56b5e22c3cf" />
+
+
 
 root cause
+
 Looking at the execution sequence, the script ran:
 
 1.installDependency (Python packages, virtual environment, and system utilities)
@@ -78,24 +83,28 @@ It exited right after KiCad because the function calls for the remaining setup s
 
 current code
 
-![alt text](image-3.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/87a8d512-10cb-4e5c-a9e4-6ab8ae10b9e5" />
+
 
 removed exit 0 from line 388
 
 updated code
-![alt text](image-4.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/e599701d-3a44-4e63-8371-30d8a63bd2c5" />
+
 
 but after doing this it still stopped at same place
 
 cause - When line 124 triggers, exit 0 shuts down the entire script process immediately. Because line 124 executes during installKicad, the flow stops right there, and functions 395–398 (copyKicadLibrary, installNghdl, installSky130Pdk, and createDesktopStartScript) never get called.
 
 updated code ( changed exit 0 to return 0 in line 136)
- ![alt text](image-5.png)
+ <img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/d5e1a319-03e2-4951-9a53-932fb6e9588c" />
+
 
 
 issue 5 : The installer made it past KiCad and reached copyKicadLibrary, but failed when trying to extract library/kicadLibrary.tar.xz
 
-![alt text](image-6.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/799e1056-5713-4cea-9b1a-3003e5c9dddd" />
+
 
 root cause
 The function copyKicadLibrary expects the compressed archive at library/kicadLibrary.tar.xz relative to where you execute ./install-eSim.sh. Because you ran the installer from ~/Downloads/eSim/Ubuntu/ instead of the root eSim/ directory, tar cannot locate the file.
@@ -104,7 +113,8 @@ fix step:
 
 checked with these commands
 
-![alt text](image-7.png)
+<img width="492" height="112" alt="image" src="https://github.com/user-attachments/assets/ebe27bb8-cea4-4cdd-b5cd-e7cdfbafd2e1" />
+
 
 finding where kicadLibrary.tar.xz actually is:
 
@@ -122,7 +132,8 @@ ln -s ~/Downloads/eSim/MacOS/library library
 
 issue 6: failed on installNghdl
 
-![alt text](image-8.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/870f9f7d-533d-4d35-a7a1-cd9d7e99bf71" />
+
 
 root cause
 
@@ -136,9 +147,11 @@ cp /home/ubuntu/Downloads/eSim/MacOS/nghdl.zip .
 
 issue 7 : unsupported Ubuntu version : 25.04 ()
 
-![alt text](image-9.png)
+<img width="464" height="512" alt="image" src="https://github.com/user-attachments/assets/4330e30e-3eef-4d1d-a2f9-82a90498ff11" />
 
-![alt text](image-10.png)
+
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/b43131cf-3128-4106-8453-07ea3bf0ba9f" />
+
 
 root cause
 
@@ -155,11 +168,13 @@ zip -u nghdl.zip nghdl/install-nghdl.sh
 
 modified code
 
-![alt text](image-11.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/3c06a689-36e5-421a-9d40-7ef6a5c572d6" />
+
 
 issue 8 : Package 'libcanberra-gtk-module' has no installation candidate
 
-![alt text](image-12.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/fe967cfe-a289-460a-8607-17d936a592d4" />
+
 
 Root Cause
 
@@ -172,7 +187,9 @@ The dependency section of install-nghdl-24.04.sh was adjusted to remove the unav
 
 updated code
 
-![alt text](image-13.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/994f1da4-cbd5-4fd4-9ab4-9320ba99379c" />
+
+
 
 then
 ` zip -u nghdl.zip nghdl/install-nghdl-scripts/install-nghdl-24.04.sh `
@@ -180,7 +197,8 @@ then
 
 issue 9 : Unhandled version llvm 20.1.2
 
-![alt text](image-14.png)
+<img width="464" height="512" alt="image" src="https://github.com/user-attachments/assets/3dced727-cb60-44e6-8b76-9547a2f76784" />
+
 
 root cause
 
@@ -192,14 +210,16 @@ Fix
 
 updated code - Changed /usr/bin/llvm-config to /usr/bin/llvm-config-18 on that ./configure line
 
-![alt text](image-15.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/0bdfb280-5f11-4117-bd07-cbf47414aaf5" />
+
 
 then - ` zip -u nghdl.zip nghdl/install-nghdl-scripts/install-nghdl-24.04.sh `
 
 
 issue 10 : cp: cannot stat 'images/logo.png': No such file or directory
 
-![alt text](image-16.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/8a05c92f-f972-44bd-821a-65f4e9b8cb53" />
+
 
 fix
 ` mkdir -p images && touch images/logo.png `
@@ -207,7 +227,8 @@ fix
 
 issue
 
-![alt text](image-17.png)
+<img width="952" height="1018" alt="image" src="https://github.com/user-attachments/assets/dcf31490-51ad-4fc9-bef3-fdde54341643" />
+
 
 The error mv: cannot overwrite '/home/ubuntu/nghdl-simulator/nghdl-simulator-source': Directory not empty happens because a previous installation run created that directory, and mv cannot move or rename a new folder over an existing, non-empty folder.
 
@@ -218,4 +239,4 @@ fix
 
 
 eSim installed successfully
-![alt text](image-18.png)
+<img width="922" height="1017" alt="image" src="https://github.com/user-attachments/assets/51720e06-dbbd-451c-9b66-c80d10370903" />
