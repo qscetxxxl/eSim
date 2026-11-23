@@ -63,7 +63,7 @@ function installNghdl
 {
 
     echo "Installing NGHDL..........................."
-    unzip -o nghdl.zip
+    #unzip -o nghdl.zip
     cd nghdl/
     chmod +x install-nghdl.sh
 
@@ -113,7 +113,7 @@ function installKicad
 
     # Define KiCad PPAs based on Ubuntu version
     if [[ "$ubuntu_version" == "24.04" || "$ubuntu_version" == "25.04" ]]; then
-        echo "Ubuntu $ubuntu_version detected."
+        echo "Ubuntu 24.04 detected."
         kicadppa="kicad/kicad-8.0-releases"
 
         # Check if KiCad is installed using dpkg-query for the main package
@@ -133,7 +133,7 @@ function installKicad
                 fi
             else
                 echo "KiCad 8.0 is already installed."
-                exit 0
+                return 0
             fi
         fi
 
@@ -151,7 +151,7 @@ function installKicad
     fi
 
     # Install KiCad packages
-    sudo apt-get install -y --no-install-recommends kicad=8.0.8+dfsg-1 kicad-footprints kicad-libraries kicad-symbols kicad-templates
+    sudo apt-get install -y --no-install-recommends kicad kicad-footprints kicad-libraries kicad-symbols kicad-templates
 
     echo "KiCad installation completed successfully!"
 }
